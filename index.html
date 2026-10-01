@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#0B1A2B">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
 <meta name="robots" content="noindex, nofollow">
 <title>Daily Plan &amp; Result BAE — Tangerang 2</title>
 <style>
@@ -917,7 +917,7 @@ bacaURL();buildKanal();addMeeting();addFup();setMode('plan');updateBadgeStatus()
 // PWA SERVICE WORKER
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').catch(function (err) {
+    navigator.serviceWorker.register('/sw.js', {scope: '/'}).catch(function (err) {
       console.log('Service Worker registration failed:', err);
     });
   });
