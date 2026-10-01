@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Daily Plan &amp; Result BAE — Tangerang 2</title>
+<style>
+:root{
+  --navy:#0B1A2B; --ink:#16283C; --emerald:#10B981; --deep:#0A7C5A;
+  --gold:#B8862B; --miss:#C2410C;
+  --paper:#FFFFFF; --line:#DCE2E8; --muted:#6B7A89; --bg:#E7EBEF;
+  --cond:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",ui-sans-serif,sans-serif;
+  --body:ui-sans-serif,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;}
+.wrap{max-width:420px;margin:0 auto;padding:12px 10px 28px;}
+
+/* Header Bar Tambahan untuk Status Google Sheet */
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.sheet-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.sheet-badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6B7A89;
+}
+.sheet-badge.active .dot { background: var(--emerald); }
+.setup-btn {
+  background: transparent;
+  border: 0;
+  color: var(--emerald);
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0 0 0 6px;
+  font-size: 12px;
+}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#D2D9E0;padding:4px;border-radius:8px;}
+.tabs button{font-family:var(--cond);font-size:15px;letter-spacing:.14em;text-transform:uppercase;
+  border:0;background:transparent;color:var(--muted);padding:9px 0;border-radius:6px;cursor:pointer;}
+.tabs button[aria-selected="true"]{background:var(--navy);color:#fff;}
+.when-note{text-align:center;font-size:11px;color:var(--muted);margin:7px 0 9px;}
+
+.paste{background:#F4F7FA;border:1px dashed #B9C7D4;border-radius:9px;padding:9px 10px;margin-bottom:10px;}
+.paste p{margin:0 0 6px;font-size:11px;color:var(--muted);line-height:1.4;}
+.paste textarea{width:100%;height:56px;font-family:var(--body);font-size:12px;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px;resize:vertical;}
+.paste .status{margin:6px 0 0;font-size:11px;color:var(--deep);}
+.paste .status.bad{color:var(--miss);}
+.out{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px;}
+.out p{margin:0 0 6px;font-size:11px;color:var(--muted);line-height:1.45;}
+.out textarea{width:100%;height:150px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;
+  color:var(--ink);background:#F7F9FB;border:1px solid var(--line);border-radius:6px;padding:8px;resize:vertical;}
+body.tidy .out{display:none;}
+.paste button{margin-top:6px;width:100%;font-family:var(--cond);font-size:13px;letter-spacing:.1em;
+  text-transform:uppercase;background:var(--deep);color:#fff;border:0;border-radius:6px;padding:9px 0;cursor:pointer;}
+
+.card{background:var(--paper);border-radius:10px;padding:14px 13px 16px;box-shadow:0 1px 6px rgba(11,26,43,.14);}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+  border-bottom:3px solid var(--navy);padding-bottom:8px;margin-bottom:12px;}
+.head .kind{font-family:var(--cond);font-size:23px;letter-spacing:.06em;text-transform:uppercase;line-height:1;}
+.head .who{font-size:11px;color:var(--muted);margin-top:3px;}
+.head .who input{width:112px;}
+.head .when{text-align:right;font-family:var(--cond);font-size:13px;letter-spacing:.08em;color:var(--muted);}
+.head .when input{width:96px;text-align:right;font-family:var(--cond);font-size:14px;letter-spacing:.06em;}
+.head .prof{margin-top:5px;font-size:11px;color:var(--muted);}
+.head .prof select{font-size:11px;padding:2px 4px;}
+
+section{margin-bottom:13px;}
+.cap{font-family:var(--cond);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line);padding-bottom:3px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.cap .add{font-family:var(--body);font-size:11px;letter-spacing:0;text-transform:none;color:var(--deep);
+  background:#E7F7F1;border:0;border-radius:5px;padding:3px 8px;cursor:pointer;}
+
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#F5F7F9;
+  border:0;border-bottom:1px solid var(--line);border-radius:4px 4px 0 0;padding:5px 6px;min-width:0;}
+input::placeholder,textarea::placeholder{color:#A6B2BD;}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--emerald);outline-offset:1px;background:#fff;}
+input[readonly]{background:transparent;border-bottom:0;color:var(--muted);}
+
+.row{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.row .grow{flex:1;}
+.item{border-left:2px solid #EDF1F4;padding-left:7px;margin-bottom:9px;}
+.del{border:0;background:transparent;color:#B9C4CE;font-size:18px;line-height:1;padding:0 3px;cursor:pointer;}
+
+.frac{display:flex;align-items:center;gap:6px;margin-bottom:7px;font-size:13.5px;}
+.frac label{flex:1;color:var(--muted);}
+.frac input{width:56px;text-align:center;font-family:var(--cond);font-size:17px;letter-spacing:.04em;}
+.frac .slash{font-family:var(--cond);font-size:17px;color:#A6B2BD;}
+.frac .komit{width:56px;text-align:center;color:var(--gold);background:#FBF6EA;}
+.frac .auto{color:var(--gold);}
+.hit{color:var(--deep);font-weight:700;}
+.short{color:var(--miss);font-weight:700;}
+.autonote{font-size:10px;color:var(--muted);margin:-3px 0 8px;}
+
+.kanal{border:1px solid var(--line);border-radius:7px;padding:8px 9px;margin-bottom:7px;}
+.kanal.off{opacity:.4;}
+.kanal .top{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.kanal .top label{font-family:var(--cond);font-size:14px;letter-spacing:.09em;text-transform:uppercase;flex:1;}
+.kanal input[type=checkbox]{width:18px;height:18px;accent-color:var(--emerald);}
+.grid3{display:grid;grid-template-columns:28px 1fr 1fr 1fr;gap:5px;align-items:center;margin-bottom:4px;}
+.grid3 .lab{font-family:var(--cond);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.grid3 input{width:100%;text-align:center;font-family:var(--cond);font-size:16px;}
+.grid3.target input{color:var(--gold);background:#FBF6EA;}
+.heads{display:grid;grid-template-columns:28px 1fr 1fr 1fr;gap:5px;margin-bottom:3px;}
+.heads span{font-size:9.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:center;line-height:1.15;}
+
+.sub-group{background:#F8FAFC;border:1px solid var(--line);border-radius:6px;padding:8px;margin-bottom:8px;}
+.sub-title{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.sub-title input{width:50px;text-align:center;font-weight:normal;}
+
+.cek{font-size:11px;padding:7px 9px;border-radius:6px;background:#F1F4F7;color:var(--muted);line-height:1.45;}
+.cek b{font-family:var(--cond);font-size:14px;letter-spacing:.04em;}
+.cek.ok{background:#E7F7F1;color:var(--deep);}
+.cek.no{background:#FDECE4;color:var(--miss);}
+
+.hint{font-size:10.5px;color:var(--muted);line-height:1.4;margin:6px 0 0;}
+.hint b{color:var(--gold);}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.actions button{font-family:var(--cond);font-size:15px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 0;border:0;border-radius:8px;cursor:pointer;}
+#copy{background:var(--navy);color:#fff;}
+#shot{background:#fff;color:var(--navy);border:1.5px solid var(--navy);}
+#btnSheet{background:var(--emerald);color:#fff;grid-column:span 2;}
+
+.tip{text-align:center;font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5;}
+
+/* STYLES MODAL CONFIGURATION */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(11,26,43,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-card {
+  background: #0B1A2B;
+  color: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 440px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-close {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.modal-banner {
+  background: #E6F9F3;
+  color: #0A7C5A;
+  border: 1px solid #B2F0DD;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+.modal-body label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #E2E8F0;
+}
+.modal-body input {
+  width: 100%;
+  background: #16283C;
+  border: 1px solid #2D435C;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+.modal-footer {
+  display: flex;
+  gap: 10px;
+}
+.btn-save {
+  flex: 2;
+  background: var(--emerald);
+  color: #fff;
+  border: 0;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-code {
+  flex: 1;
+  background: #16283C;
+  color: #fff;
+  border: 1px solid #2D435C;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+body.tidy .top-bar, body.tidy .tabs,body.tidy .when-note,body.tidy .paste,body.tidy .actions,body.tidy .tip,
+body.tidy .cap .add,body.tidy .del,body.tidy .hint,body.tidy .autonote,body.tidy .heads .sp{display:none;}
+body.tidy .wrap{padding-top:6px;}
+body.tidy input,body.tidy select,body.tidy textarea{background:transparent;border-bottom:0;padding-left:0;padding-right:2px;}
+body.tidy .grid3.target input,body.tidy .frac .komit{background:transparent;}
+body.tidy input::placeholder,body.tidy textarea::placeholder{color:transparent;}
+body.tidy .kanal.off,body.tidy .empty{display:none;}
+body.tidy .item{border-left:0;padding-left:0;}
+body.tidy .card{box-shadow:none;}
+body.tidy .exit{display:block;}
+.exit{display:none;width:100%;margin-top:12px;background:transparent;border:0;color:var(--muted);
+  font-size:12px;padding:10px;cursor:pointer;}
+@media(min-width:520px){.wrap{max-width:460px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header Bar Tambahan untuk Status Integrasi -->
+  <div class="top-bar">
+    <div class="sheet-badge" id="sheetBadge">
+      <span class="dot"></span>
+      <span id="badgeText">Google Sheet Inactive</span>
+      <button class="setup-btn" onclick="openModal()">⚙️ Setup Sheet</button>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tabPlan" aria-selected="true" onclick="setMode('plan')">Plan</button>
+    <button role="tab" id="tabResult" aria-selected="false" onclick="setMode('result')">Result</button>
+  </div>
+  <p class="when-note" id="whenNote">Isi sebelum huddle jam 08.00</p>
+
+  <div class="paste resultOnly" id="pasteBox">
+    <p>Paste teks PLAN pagi kamu dari grup WA, biar tidak ketik ulang.</p>
+    <textarea id="pasteArea" placeholder="*PLAN Kam 27 Agu 2026 — —* ..."></textarea>
+    <button onclick="tarikPlan()">Isi dari plan pagi</button>
+    <p class="status" id="pasteStatus"></p>
+  </div>
+
+  <div class="card" id="card">
+    <div class="head">
+      <div>
+        <div class="kind" id="kind">Plan</div>
+        <div class="who">Nama <input id="nama" placeholder="tulis nama" oninput="simpanURL()"></div>
+        <div class="prof">Profil
+          <select id="profil" onchange="terapkanProfil();simpanURL()">
+            <option value="nj" selected>New joiner</option>
+            <option value="jr">Junior</option>
+            <option value="sr">Senior</option>
+            <option value="cs">Custom</option>
+          </select>
+        </div>
+      </div>
+      <div class="when"><input id="tgl"></div>
+    </div>
+
+    <section id="secTarget">
+      <div class="cap"><span id="capTarget">Target hari ini</span></div>
+      <div class="frac">
+        <label>Janji temu baru</label>
+        <input id="jtA" class="resultOnly" inputmode="numeric" placeholder="aktual" oninput="grade(this,'jtK')">
+        <span class="slash resultOnly">/</span>
+        <input class="komit" id="jtK" inputmode="numeric" placeholder="target" oninput="grade(document.getElementById('jtA'),'jtK');cekSum()">
+      </div>
+      <div class="frac">
+        <label>Kontak tersambung</label>
+        <input id="ktA" class="resultOnly auto" readonly>
+        <span class="slash resultOnly">/</span>
+        <input id="ktK" class="auto" readonly>
+      </div>
+      <p class="autonote">Kontak tersambung dijumlahkan otomatis dari kolom tengah kanal yang aktif.</p>
+    </section>
+
+    <section id="secMeeting">
+      <div class="cap"><span>Meeting</span><button class="add" onclick="addMeeting()">+ tambah</button></div>
+      <div id="meetings"></div>
+    </section>
+
+    <section class="resultOnly" id="secFtAS">
+      <div class="cap"><span>Free Trial Khusus AS</span></div>
+      
+      <div class="sub-group">
+        <div class="sub-title">
+          <span>Free Trial AS</span>
+          <input id="ftAsCount" type="number" inputmode="numeric" placeholder="0">
+        </div>
+        <textarea id="ftAsList" rows="2" style="width:100%;font-size:13px;" placeholder="Nama Pt ( Update )"></textarea>
+      </div>
+
+      <div class="sub-group">
+        <div class="sub-title">
+          <span>Sent Quo Manual =</span>
+          <input id="ftQuoCount" type="number" inputmode="numeric" placeholder="0">
+        </div>
+        <textarea id="ftQuoList" rows="2" style="width:100%;font-size:13px;" placeholder="Nama Pt ( Update )"></textarea>
+      </div>
+
+      <div class="sub-group">
+        <div class="sub-title">
+          <span>Sent Proforma</span>
+          <input id="ftProfCount" type="number" inputmode="numeric" placeholder="0">
+        </div>
+        <textarea id="ftProfList" rows="2" style="width:100%;font-size:13px;" placeholder="Nama Pt ( Update )"></textarea>
+      </div>
+    </section>
+
+    <section id="secFup">
+      <div class="cap"><span>Follow up payment</span><button class="add" onclick="addFup()">+ tambah</button></div>
+      <div id="fups"></div>
+      <p class="hint"><b>Wajib diisi</b> selama masih ada deal di stage Sent Quotation. Link HubSpot wajib ikut.</p>
+    </section>
+
+    <section id="secProspek">
+      <div class="cap"><span>Prospecting</span></div>
+      <div id="kanals"></div>
+      <div class="cek" id="cek">Centang kanal yang dipakai hari ini.</div>
+      <p class="hint">Kanal yang dicentang tapi tidak dikerjakan <b>tetap terhitung nol</b> di laporan sore.</p>
+    </section>
+
+    <section class="resultOnly" id="secHambatan">
+      <div class="cap"><span>Hambatan</span></div>
+      <input id="hambatan" style="width:100%" placeholder="tulis apa adanya, atau isi tanda -">
+    </section>
+
+    <section class="resultOnly" id="secBesok">
+      <div class="cap"><span>Besok</span></div>
+      <div class="row">
+        <input id="bJt" inputmode="numeric" style="width:54px" placeholder="0">
+        <span style="font-size:12.5px;color:var(--muted)">janji temu</span>
+        <input id="bKt" inputmode="numeric" style="width:54px" placeholder="0">
+        <span style="font-size:12.5px;color:var(--muted)">kontak</span>
+      </div>
+      <div class="row"><input class="grow" id="bFokus" placeholder="fokus besok: kunjungan / deal yang ditagih"></div>
+    </section>
+  </div>
+
+  <button class="exit" onclick="setTidy(false)">Ketuk untuk edit lagi</button>
+
+  <div class="actions">
+    <button id="copy" onclick="salin()">Salin teks</button>
+    <button id="shot" onclick="setTidy(true)">Rapikan</button>
+    <button id="btnSheet" class="resultOnly" onclick="kirimKeGoogleSheets()">Kirim ke Google Sheets</button>
+  </div>
+  <div class="out" id="outBox" style="display:none">
+    <p id="outNote">Teks laporan kamu. Kalau tidak otomatis tersalin: tekan lama di kotak ini, pilih Select all, lalu Copy.</p>
+    <textarea id="outArea" readonly></textarea>
+  </div>
+
+  <p class="tip">Salin teks &rarr; paste ke grup WA. Rapikan &rarr; kartunya bersih, tinggal screenshot.<br>
+  Isi nama dulu sebelum simpan ke home screen. Kalau setelah dibuka lagi namanya masih terisi, berarti tidak perlu diketik ulang tiap hari.</p>
+</div>
+
+<!-- MODAL POPUP SETUP GOOGLE APPS SCRIPT -->
+<div class="modal-overlay" id="configModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>🔌 Konfigurasi Google Apps Script</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-banner">
+      📌 <b>URL Web App Google Apps Script</b><br>
+      Tempelkan URL Web App hasil deploy Google Apps Script Anda di bawah ini agar form bisa mengirim data secara langsung ke Google Sheets.
+    </div>
+    <div class="modal-body">
+      <label>Web App URL (https://script.google.com/macros/s/.../exec)</label>
+      <input type="text" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-save" onclick="saveConfig()">Simpan &amp; Hubungkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =======================================================================
+// MANAGEMENT GOOGLE APPS SCRIPT URL VIA LOCALSTORAGE
+// =======================================================================
+var GOOGLE_SCRIPT_URL = localStorage.getItem('BAE_SCRIPT_URL') || '';
+
+function updateBadgeStatus() {
+  var badge = document.getElementById('sheetBadge');
+  var badgeText = document.getElementById('badgeText');
+  if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.trim() !== '') {
+    badge.classList.add('active');
+    badgeText.textContent = 'Google Sheet Active';
+  } else {
+    badge.classList.remove('active');
+    badgeText.textContent = 'Google Sheet Inactive';
+  }
+}
+
+function openModal() {
+  document.getElementById('cfgUrl').value = GOOGLE_SCRIPT_URL;
+  document.getElementById('configModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('configModal').classList.remove('active');
+}
+
+function saveConfig() {
+  var url = document.getElementById('cfgUrl').value.trim();
+  if (url && !url.startsWith('https://script.google.com')) {
+    alert("URL harus diawali dengan https://script.google.com/macros/s/...");
+    return;
+  }
+  GOOGLE_SCRIPT_URL = url;
+  localStorage.setItem('BAE_SCRIPT_URL', url);
+  updateBadgeStatus();
+  closeModal();
+  if (url) alert("URL Google Apps Script berhasil disimpan & terhubung!");
+}
+
+var PROFIL={
+  nj:{cc:[40,12,2], wa:[60,12,2], con:[30, 9,1], coff:[15,8,2]},
+  jr:{cc:[30,10,2], wa:[45, 9,1], con:[25, 8,1], coff:[12,7,2]},
+  sr:{cc:[20, 7,1], wa:[30, 6,1], con:[15, 5,1], coff:[ 8,5,1]},
+  cs:{cc:[0,0,0],   wa:[0,0,0],   con:[0,0,0],   coff:[0,0,0]}
+};
+var TARGET_JANJI_TEMU={ nj:3, jr:3, sr:2, cs:0 };
+
+var mode='plan';
+var KANAL=[
+  {id:'cc',  nama:'Cold call',      lab:['dial','tersambung','janji temu'],       ket:'data apa yang ditelepon'},
+  {id:'wa',  nama:'WA blast',       lab:['dikirim','dibalas','janji temu'],       ket:'data apa yang dikirim'},
+  {id:'con', nama:'Canvass online', lab:['data didapat','dihubungi','janji temu'],ket:'source: Maps / LinkedIn / lainnya'},
+  {id:'coff',nama:'Canvass offline',lab:['dikunjungi','ketemu PIC','janji temu'], ket:'area dan industri'}
+];
+
+(function(){
+  var h=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  var b=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  var d=new Date();
+  document.getElementById('tgl').value=h[d.getDay()]+' '+d.getDate()+' '+b[d.getMonth()]+' '+d.getFullYear();
+})();
+
+function simpanURL(){
+  try{
+    var q='?n='+encodeURIComponent(document.getElementById('nama').value.trim())+
+          '&p='+document.getElementById('profil').value;
+    history.replaceState(null,'',q);
+  }catch(e){}
+}
+function bacaURL(){
+  try{
+    var p=new URLSearchParams(location.search);
+    if(p.get('n'))document.getElementById('nama').value=p.get('n');
+    if(p.get('p')&&PROFIL[p.get('p')])document.getElementById('profil').value=p.get('p');
+  }catch(e){}
+}
+
+function addMeeting(d){
+  d=d||{};
+  var box=document.createElement('div');
+  box.className='item meeting';
+  box.innerHTML=
+    '<div class="row">'+
+      '<input class="jam" style="width:56px" inputmode="numeric" placeholder="10.00">'+
+      '<input class="grow pt" placeholder="nama PT">'+
+      '<select class="cara"><option>online</option><option>offline</option></select>'+
+      '<button class="del" onclick="this.closest(\'.item\').remove()">&times;</button>'+
+    '</div>'+
+    '<div class="row"><input class="grow next" placeholder="'+
+      (mode==='plan'?'catatan / produk':'hasil + next step bertanggal')+'"></div>';
+  document.getElementById('meetings').appendChild(box);
+  if(d.jam)box.querySelector('.jam').value=d.jam;
+  if(d.pt)box.querySelector('.pt').value=d.pt;
+  if(d.cara)box.querySelector('.cara').value=d.cara;
+  if(d.next)box.querySelector('.next').value=d.next;
+  return box;
+}
+
+function addFup(d){
+  d=d||{};
+  var box=document.createElement('div');
+  box.className='item fup';
+  box.innerHTML=
+    '<div class="row">'+
+      '<input class="grow pt" placeholder="nama PT">'+
+      '<input class="stage" style="width:40%" value="Sent Quotation">'+
+      '<button class="del" onclick="this.closest(\'.item\').remove()">&times;</button>'+
+    '</div>'+
+    '<div class="row"><input class="grow act" placeholder="'+
+      (mode==='plan'?'langkah / rencana bayar':'paid / janji bayar tgl')+'"></div>'+
+    '<div class="row"><input class="grow link" placeholder="link HubSpot (opsional)"></div>';
+  document.getElementById('fups').appendChild(box);
+  if(d.pt)box.querySelector('.pt').value=d.pt;
+  if(d.stage)box.querySelector('.stage').value=d.stage;
+  if(d.act)box.querySelector('.act').value=d.act;
+  if(d.link)box.querySelector('.link').value=d.link;
+  return box;
+}
+
+function buildKanal(){
+  var box=document.getElementById('kanals');box.innerHTML='';
+  KANAL.forEach(function(k){
+    var el=document.createElement('div');
+    el.className='kanal off';el.id='k_'+k.id;
+    el.innerHTML=
+      '<div class="top"><input type="checkbox" id="on_'+k.id+'" onchange="toggleKanal(\''+k.id+'\')">'+
+        '<label for="on_'+k.id+'">'+k.nama+'</label></div>'+
+      '<div class="heads"><span class="sp"></span><span>'+k.lab[0]+'</span><span>'+k.lab[1]+'</span><span>'+k.lab[2]+'</span></div>'+
+      '<div class="grid3 target"><div class="lab">Tgt</div>'+
+        '<input id="t1_'+k.id+'" inputmode="numeric" oninput="jadiCustom()">'+
+        '<input id="t2_'+k.id+'" inputmode="numeric" oninput="jadiCustom();hitungKontak()">'+
+        '<input id="t3_'+k.id+'" inputmode="numeric" oninput="jadiCustom();cekSum()"></div>'+
+      '<div class="grid3 aktual resultOnly"><div class="lab">Akt</div>'+
+        '<input id="a1_'+k.id+'" inputmode="numeric" placeholder="0" oninput="grade(this,\'t1_'+k.id+'\')">'+
+        '<input id="a2_'+k.id+'" inputmode="numeric" placeholder="0" oninput="grade(this,\'t2_'+k.id+'\');hitungKontak()">'+
+        '<input id="a3_'+k.id+'" inputmode="numeric" placeholder="0" oninput="grade(this,\'t3_'+k.id+'\')"></div>'+
+      '<input id="d_'+k.id+'" style="width:100%;margin-top:5px" placeholder="'+k.ket+'">';
+    box.appendChild(el);
+  });
+  terapkanProfil();
+}
+
+function terapkanProfil(){
+  var p=document.getElementById('profil').value,cfg=PROFIL[p]||PROFIL.cs;
+  KANAL.forEach(function(k){
+    var t=cfg[k.id]||[0,0,0];
+    document.getElementById('t1_'+k.id).value=t[0]||'';
+    document.getElementById('t2_'+k.id).value=t[1]||'';
+    document.getElementById('t3_'+k.id).value=t[2]||'';
+    document.getElementById('on_'+k.id).checked = (t[0]>0 || t[1]>0 || t[2]>0);
+    document.getElementById('k_'+k.id).classList.toggle('off', !document.getElementById('on_'+k.id).checked);
+  });
+  document.getElementById('jtK').value=TARGET_JANJI_TEMU[p]||'';
+  syncMode();cekSum();hitungKontak();
+}
+
+function jadiCustom(){document.getElementById('profil').value='cs';simpanURL();}
+
+function toggleKanal(id){
+  var cb=document.getElementById('on_'+id);
+  document.getElementById('k_'+id).classList.toggle('off',!cb.checked);
+  cekSum();hitungKontak();
+}
+
+function hitungKontak(){
+  var tgt=0,akt=0;
+  KANAL.forEach(function(k){
+    var cb=document.getElementById('on_'+k.id);if(!cb||!cb.checked)return;
+    tgt+=Number(document.getElementById('t2_'+k.id).value||0);
+    akt+=Number(document.getElementById('a2_'+k.id).value||0);
+  });
+  var ktK=document.getElementById('ktK'),ktA=document.getElementById('ktA');
+  ktK.value=tgt||'';
+  ktA.value=(mode==='result')?(akt||'0'):'';
+  ktA.classList.remove('hit','short');
+  if(mode==='result'&&tgt)ktA.classList.add(akt>=tgt?'hit':'short');
+}
+
+function cekSum(){
+  var box=document.getElementById('cek'),sum=0,aktif=0,vol=0;
+  KANAL.forEach(function(k){
+    var cb=document.getElementById('on_'+k.id);if(!cb||!cb.checked)return;
+    aktif++;
+    sum+=Number(document.getElementById('t3_'+k.id).value||0);
+    vol+=Number(document.getElementById('t1_'+k.id).value||0);
+  });
+  var tgt=Number(document.getElementById('jtK').value||0);
+  var beban=aktif>2?'<br><span style="color:var(--gold)">'+aktif+' kanal aktif, total '+vol+
+    ' aktivitas. Pastikan muat — kanal yang tidak muat biasanya hilang diam-diam.</span>':'';
+  box.className='cek';
+  if(!aktif){box.textContent='Centang kanal yang dipakai hari ini.';return;}
+  if(!tgt){box.innerHTML='Target janji temu dari kanal: <b>'+sum+'</b>. Isi target hari ini supaya bisa dicek.'+beban;return;}
+  if(sum>=tgt){box.classList.add('ok');
+    box.innerHTML='Target janji temu dari kanal <b>'+sum+'</b>, menutup target hari ini <b>'+tgt+'</b>.'+beban;}
+  else{box.classList.add('no');
+    box.innerHTML='Kanal cuma menghasilkan <b>'+sum+'</b> janji temu, target hari ini <b>'+tgt+'</b>. Kurang '+(tgt-sum)+' — naikkan volume atau tambah kanal.'+beban;}
+}
+
+function setMode(m){
+  mode=m;
+  document.getElementById('tabPlan').setAttribute('aria-selected',m==='plan');
+  document.getElementById('tabResult').setAttribute('aria-selected',m==='result');
+  document.getElementById('kind').textContent=m==='plan'?'Plan':'Result';
+  document.getElementById('capTarget').textContent=m==='plan'?'Target hari ini':'Aktual / target';
+  document.getElementById('whenNote').textContent=m==='plan'
+    ?'Isi sebelum huddle jam 08.00':'Isi jam 17.00, sebelum pulang';
+  syncMode();hitungKontak();
+}
+
+function syncMode(){
+  var show=(mode==='result');
+  [].forEach.call(document.querySelectorAll('.resultOnly'),function(e){e.style.display=show?'':'none';});
+  [].forEach.call(document.querySelectorAll('.meeting .next'),function(e){
+    e.placeholder=show?'hasil + next step bertanggal':'catatan / produk';});
+  [].forEach.call(document.querySelectorAll('.fup .act'),function(e){
+    e.placeholder=show?'paid / janji bayar tgl':'langkah / rencana bayar';});
+  if(!show){[].forEach.call(document.querySelectorAll('input'),function(i){i.classList.remove('hit','short');});}
+}
+
+function grade(el,tgtId){
+  var t=document.getElementById(tgtId),k=t?t.value:'';
+  el.classList.remove('hit','short');
+  if(mode!=='result'||k===''||el.value==='')return;
+  el.classList.add(Number(el.value)>=Number(k)?'hit':'short');
+}
+
+function pesan(t,buruk){
+  var e=document.getElementById('pasteStatus');
+  e.textContent=t;e.className='status'+(buruk?' bad':'');
+  setTimeout(function(){if(e.textContent===t)e.textContent='';},6000);
+}
+
+function tarikPlan(){
+  var teks=document.getElementById('pasteArea').value;
+  if(!teks.trim()){pesan('Paste dulu teks PLAN pagi kamu.',true);return;}
+  var baris=teks.split('\n'),bagian='';
+  var h=baris[0].match(/\*PLAN\s+(.+?)(?:\s+—\s+(.*?))?\*/i);
+  if(h){
+    document.getElementById('tgl').value=h[1];
+    if(h[2] && h[2].trim() !== '—') document.getElementById('nama').value=h[2].trim();
+    simpanURL();
+  }
+  document.getElementById('meetings').innerHTML='';
+  document.getElementById('fups').innerHTML='';
+  KANAL.forEach(function(k){document.getElementById('on_'+k.id).checked=false;
+    document.getElementById('k_'+k.id).classList.add('off');});
+
+  document.getElementById('ftAsCount').value = '';
+  document.getElementById('ftAsList').value = '';
+  document.getElementById('ftQuoCount').value = '';
+  document.getElementById('ftQuoList').value = '';
+  document.getElementById('ftProfCount').value = '';
+  document.getElementById('ftProfList').value = '';
+
+  baris.forEach(function(b){
+    var t=b.trim();if(!t||t.startsWith('*PLAN'))return;
+    var atas=t.toUpperCase();
+    if(atas==='TARGET HARI INI'||atas==='HASIL'){bagian='target';return;}
+    if(atas==='MEETING = (ANGKA)'||atas.startsWith('MEETING')){bagian='meeting';return;}
+    if(atas==='FOLLOW UP PAYMENT'){bagian='fup';return;}
+    if(atas==='PROSPECTING'){bagian='prospek';return;}
+    if(atas==='HAMBATAN'||atas==='BESOK'){bagian='';return;}
+
+    if(bagian==='target'){
+      var m=t.match(/^Janji temu baru:\s*(\d+)/i);
+      if(m)document.getElementById('jtK').value=m[1];
+      return;
+    }
+    if(bagian==='meeting'){
+      var mm=t.match(/^(\d{1,2}[.:]\d{2})?\s*(.+?)\s*\((online|offline)\)(?:\s*—\s*(.*))?$/i);
+      if(mm){
+        addMeeting({jam:mm[1]||'',pt:mm[2],cara:(mm[3]||'online').toLowerCase(),next:mm[4]||''});
+      }
+      return;
+    }
+    if(bagian==='fup'){
+      var ff=t.match(/^(.+?)\s*\((.+?)\)\s*—\s*(.*)$/);
+      if(ff){
+        var sisa=ff[3].split(' — ');
+        addFup({pt:ff[1],stage:ff[2],act:sisa[0]||'',link:(sisa[1]||'').trim()});
+      }
+      return;
+    }
+    if(bagian==='prospek'){
+      var parts = t.split(':');
+      if(parts.length < 2) return;
+      var nama=parts[0].trim();
+      var k=KANAL.filter(function(x){return x.nama.toLowerCase()===nama.toLowerCase();})[0];
+      if(!k)return;
+      var matchNums = parts[1].match(/\d+/g)||[0,0,0];
+      document.getElementById('on_'+k.id).checked=true;
+      document.getElementById('k_'+k.id).classList.remove('off');
+      if(matchNums[0])document.getElementById('t1_'+k.id).value=matchNums[0];
+      if(matchNums[1])document.getElementById('t2_'+k.id).value=matchNums[1];
+      if(matchNums[2])document.getElementById('t3_'+k.id).value=matchNums[2];
+      return;
+    }
+  });
+
+  if(!document.querySelectorAll('.meeting').length)addMeeting();
+  if(!document.querySelectorAll('.fup').length)addFup();
+  syncMode();cekSum();hitungKontak();
+  document.getElementById('pasteArea').value='';
+  pesan('Terisi. Tinggal isi angka aktual dan hasilnya.',false);
+}
+
+function setTidy(on){
+  if(on){
+    [].forEach.call(document.querySelectorAll('.row, .item'),function(r){
+      var isi=[].some.call(r.querySelectorAll('input, textarea'),function(i){
+        return i.type!=='checkbox'&&i.value.trim()&&i.className.indexOf('stage')<0;});
+      r.classList.toggle('empty',!isi);
+    });
+    ['secMeeting','secFtAS','secFup','secHambatan','secBesok'].forEach(function(id){
+      var s=document.getElementById(id);if(!s)return;
+      var isi=[].some.call(s.querySelectorAll('input, textarea'),function(i){
+        return i.type!=='checkbox'&&i.value.trim()&&i.className.indexOf('stage')<0;});
+      s.classList.toggle('empty',!isi);
+    });
+  }
+  document.body.classList.toggle('tidy',on);
+  window.scrollTo(0,0);
+}
+
+function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+
+function susunTeks(){
+  var L=[],nama=v('nama')||'—',tgl=v('tgl');
+  L.push('*'+(mode==='plan'?'PLAN ':'RESULT ')+tgl+' — '+nama+'*');L.push('');
+  L.push(mode==='plan'?'TARGET HARI INI':'HASIL');
+  L.push('Janji temu baru: '+(mode==='plan'?(v('jtK')||'0'):(v('jtA')||'0')+' / '+(v('jtK')||'-')));
+  L.push('Kontak tersambung: '+(mode==='plan'?(v('ktK')||'0'):(v('ktA')||'0')+' / '+(v('ktK')||'-')));
+
+  var mOut=[];
+  [].forEach.call(document.querySelectorAll('.meeting'),function(m){
+    var pt=m.querySelector('.pt').value.trim();if(!pt)return;
+    var jam=m.querySelector('.jam').value.trim(),cara=m.querySelector('.cara').value;
+    var nx=m.querySelector('.next').value.trim();
+    mOut.push((jam?jam+' ':'')+pt+' ('+cara+')'+(nx?' — '+nx:''));
+  });
+  L.push('');
+  L.push('MEETING = ' + (mOut.length ? mOut.length : '(Angka)'));
+  mOut.forEach(function(x){L.push(x);});
+
+  if (mode === 'result') {
+    L.push('');
+    L.push('Free Trial Khusus AS ' + (v('ftAsCount') ? v('ftAsCount') : '( Angka )'));
+    L.push(v('ftAsList') || 'Nama Pt ( Update )');
+    L.push('Sent Quo Manual = ' + (v('ftQuoCount') ? v('ftQuoCount') : '( Angka )'));
+    L.push(v('ftQuoList') || 'Nama Pt ( Update )');
+    L.push('Sent Proforma ' + (v('ftProfCount') ? v('ftProfCount') : '( Angka )'));
+    L.push(v('ftProfList') || 'Nama Pt ( Update)');
+  }
+
+  var fOut=[];
+  [].forEach.call(document.querySelectorAll('.fup'),function(f){
+    var pt=f.querySelector('.pt').value.trim();if(!pt)return;
+    var lk=f.querySelector('.link').value.trim();
+    fOut.push(pt+' ('+(f.querySelector('.stage').value.trim()||'-')+') — '+
+      (f.querySelector('.act').value.trim()||'-')+(lk?' — '+lk:''));
+  });
+  if(fOut.length){L.push('');L.push('FOLLOW UP PAYMENT');fOut.forEach(function(x){L.push(x);});}
+
+  var pOut=[];
+  KANAL.forEach(function(k){
+    if(!document.getElementById('on_'+k.id).checked)return;
+    var ket=v('d_'+k.id),t1=v('t1_'+k.id)||'0',t2=v('t2_'+k.id)||'0',t3=v('t3_'+k.id)||'0';
+    if(mode==='plan'){
+      pOut.push(k.nama+': '+t1+' '+k.lab[0]+', target '+t2+' '+k.lab[1]+' / '+t3+' '+k.lab[2]+(ket?' — '+ket:''));
+    }else{
+      pOut.push(k.nama+': '+(v('a1_'+k.id)||'0')+'/'+t1+' '+k.lab[0]+' · '+
+        (v('a2_'+k.id)||'0')+'/'+t2+' '+k.lab[1]+' · '+
+        (v('a3_'+k.id)||'0')+'/'+t3+' '+k.lab[2]+(ket?' — '+ket:''));
+    }
+  });
+  if(pOut.length){L.push('');L.push('PROSPECTING');pOut.forEach(function(x){L.push(x);});}
+
+  if(mode==='result'){
+    L.push('');L.push('HAMBATAN');L.push(v('hambatan')||'-');
+    if(v('bJt')||v('bKt')||v('bFokus')){
+      L.push('');L.push('BESOK');
+      L.push('Janji temu: '+(v('bJt')||'0')+' · Kontak: '+(v('bKt')||'0'));
+      if(v('bFokus'))L.push(v('bFokus'));
+    }
+  }
+  return L.join('\n');
+}
+
+function tandaTersalin(){
+  var b=document.getElementById('copy');b.textContent='Tersalin';
+  setTimeout(function(){b.textContent='Salin teks';},1600);
+}
+
+function salin(){
+  var teks=susunTeks();
+  var box=document.getElementById('outBox'),area=document.getElementById('outArea');
+  area.value=teks;box.style.display='';
+  document.getElementById('outNote').textContent=
+    'Teks laporan kamu. Kalau tidak otomatis tersalin: tekan lama di kotak ini, pilih Select all, lalu Copy.';
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(teks).then(function(){
+      tandaTersalin();
+      document.getElementById('outNote').textContent='Sudah tersalin. Tinggal paste di grup WA. Kotak di bawah cuma cadangan.';
+    }).catch(function(){salinLama(teks);});
+  }else{salinLama(teks);}
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function salinLama(teks){
+  var ta=document.createElement('textarea');
+  ta.value=teks;ta.style.position='fixed';ta.style.top='0';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  ta.setSelectionRange(0,teks.length);
+  var ok=false;try{ok=document.execCommand('copy');}catch(e){ok=false;}
+  document.body.removeChild(ta);
+  if(ok){tandaTersalin();
+    document.getElementById('outNote').textContent='Sudah tersalin. Tinggal paste di grup WA. Kotak di bawah cuma cadangan.';}
+}
+
+// =======================================================================
+// FUNGSI PENGIRIMAN DATA KE GOOGLE SHEETS VIA DYNAMIC URL
+// =======================================================================
+function kirimKeGoogleSheets() {
+  if (mode !== 'result') {
+    alert("Pengiriman ke Google Sheets hanya dapat dilakukan dari tab RESULT!");
+    return;
+  }
+
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.trim() === "") {
+    openModal();
+    return;
+  }
+
+  var btn = document.getElementById('btnSheet');
+  var txtAwal = btn.textContent;
+  btn.textContent = 'Mengirim...';
+  btn.disabled = true;
+
+  var meetingElements = document.querySelectorAll('.meeting');
+  var validMeetingCount = 0;
+  meetingElements.forEach(function(m) {
+    if (m.querySelector('.pt').value.trim() !== '') validMeetingCount++;
+  });
+
+  var payload = {
+    tanggal: v('tgl'),
+    nama: v('nama'),
+    mode: mode.toUpperCase(),
+    meetingCount: validMeetingCount,
+    demo: Number(v('ftAsCount')) || 0,
+    quoManual: Number(v('ftQuoCount')) || 0,
+    proforma: Number(v('ftProfCount')) || 0,
+    janjiTemu: (v('jtA') + ' / ' + v('jtK')),
+    kontak: (v('ktA') + ' / ' + v('ktK')),
+    meetingDetail: Array.from(meetingElements).map(function(m) {
+      var pt = m.querySelector('.pt').value.trim();
+      var jam = m.querySelector('.jam').value.trim();
+      var cara = m.querySelector('.cara').value;
+      var nx = m.querySelector('.next').value.trim();
+      return pt ? (jam + ' ' + pt + ' (' + cara + ')' + (nx ? ' — ' + nx : '')) : '';
+    }).filter(Boolean).join(' | '),
+    prospecting: KANAL.map(function(k) {
+      if(!document.getElementById('on_'+k.id).checked) return '';
+      return k.nama + ': ' + v('t1_'+k.id) + ' dial/kirim, ' + v('t2_'+k.id) + ' kontak, ' + v('t3_'+k.id) + ' JT';
+    }).filter(Boolean).join(' | '),
+    hambatan: v('hambatan')
+  };
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function() {
+    alert('Data Result berhasil dikirim ke Google Sheets!');
+    btn.textContent = txtAwal;
+    btn.disabled = false;
+  })
+  .catch(function(err) {
+    alert('Gagal mengirim data: ' + err);
+    btn.textContent = txtAwal;
+    btn.disabled = false;
+  });
+}
+
+document.getElementById('card').addEventListener('click',function(){
+  if(document.body.classList.contains('tidy'))setTidy(false);
+});
+
+bacaURL();buildKanal();addMeeting();addFup();setMode('plan');updateBadgeStatus();
+</script>
+</body>
+</html>
